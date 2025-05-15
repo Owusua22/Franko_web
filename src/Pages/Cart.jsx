@@ -6,8 +6,7 @@ import {
   getCartById,
 } from '../Redux/Slice/cartSlice';
 
-import {
-  Button,
+import {Button,
   Checkbox,
   Dialog,
   DialogHeader,
@@ -35,7 +34,18 @@ const CartPage = () => {
   useEffect(() => {
     if (cartId) dispatch(getCartById(cartId));
   }, [dispatch, cartId]);
-
+  useEffect(() => {
+    const selectedCartData = cart.filter((item) =>
+      selectedItems.includes(item.productId)
+    );
+    localStorage.setItem("selectedCart", JSON.stringify(selectedCartData));
+  }, [selectedItems, cart]);
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("selectedCart");
+    };
+  }, []);
+    
   const toggleSelectAll = () => {
     const allSelected = !selectAll;
     setSelectAll(allSelected);
