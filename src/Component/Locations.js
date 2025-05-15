@@ -314,10 +314,109 @@ const locations = [
           { name: "Techiman North", delivery_fee: 0 },
           { name: "Tuobodom", delivery_fee: 0 }
         ]
-      }
+      }, 
+      {
+        region: "Central",
+      towns: [
+       
+        "Cape Coast", "Winneba", "Swedru", "Saltpond", "Elmina", "Anomabo", "Apam", "Biriwa", "Dunkwa-on-Offin",
+        "Agona Swedru", "Awutu Breku", "Kasoa", "Komenda", "Mankessim", "Moree", "Twifo Praso", "Assin Fosu",
+        "Bawjiase", "Ajumako", "Abura Dunkwa", "Abrem Agona", "Agona Nsaba", "Akropong Akwapim", "Akwatia",
+        "Amanfro", "Amansuri", "Amasaman", "Anto", "Apewosika", "Asakraka", "Asikuma", "Assin Achireso",
+        "Assin Dadieso", "Assin Jamai", "Assin Kushea", "Assin Manso", "Assin Praso", "Assin Sienchem",
+        "Assin Swedru", "Asueyi", "Atabadzie", "Awukugua", "Ayensudo", "Banso", "Bawjiase", "Bemam", "Besease",
+        "Bobikuma", "Bodwiasi", "Brakwa", "Breman Asikuma", "Breman Baako", "Breman Bedu", "Breman Essiam",
+        "Breman Kuntunase", "Breman Kwa", "Breman Nkosim", "Breku Amanfoh", "Ejumako", "Ekumfi Abor",
+        "Ekumfi Akwaada", "Ekumfi Amenfukru", "Ekumfi Ebabu", "Ekumfi Imuna", "Ekumfi Kyekyewere",
+        "Ekumfi Nanabin", "Ekumfi Otuam", "Ekumfi Yakaku", "Enyan Abasie", "Enyan Abowiam", "Enyan Achiase",
+        "Enyan Adenya", "Enyan Agemam", "Enyan Ahenkofi", "Enyan Akohwaa", "Enyan Akrofrom", "Enyan Amanoka",
+        "Enyan Amuantem", "Enyan Anaafo", "Enyan Anakum", "Enyan Ankanfo", "Enyan Anyankrom", "Enyan Arubakrom",
+        "Enyan Asaasegye", "Enyan Asaamang", "Enyan Assin", "Enyan Assineye", "Enyan Awurawa", "Enyan Ayekkrom",
+        "Enyan Ayipey", "Enyan Bawjiase", "Enyan Behenakrom", "Enyan Bosingiri", "Enyan Deensuano",
+        "Enyan Dwendamen", "Enyan Edwinasi", "Enyan Egyadam", "Enyan Eikrom", "Enyan Ekumfua", "Enyan Ekurana",
+        "Enyan Emikrom", "Enyan Enyan Abaasa", "Enyan Enyan Adentan", "Enyan Enyan Akuran", "Enyan Enyan Apaman",
+        "Enyan Enyan Ayiresu", "Enyan Enyan Dadiese", "Enyan Enyan Denkyira", "Enyan Enyan Maim",
+        "Enyan Enyan Nsunsuam", "Enyan Enyan Ntoaman", "Enyan Enyan Nyenye", "Enyan Enwansue", "Enyan Esuohyiau",
+        "Enyan Faana", "Enyan Fasi", "Fatik", "Gomoa Abora", "Gomoa Aburansa", "Gomoa Adamrobe", "Gomoa Afransi",
+        "Gomoa Agyarkrom", "Gomoa Akaati", "Gomoa Akyena", "Gomoa Akramang", "Gomoa Akraway", "Gomoa Akworkrom",
+        "Gomoa Anaafo", "Gomoa Antsadze", "Gomoa Anyinase", "Gomoa Apam", "Gomoa Ashram", "Gomoa Awombew",
+        "Gomoa Awombrew", "Gomoa Ayayee", "Gomoa Bodee", "Gomoa Buadukrom", "Gomoa Dasum", "Gomoa Dawuman",
+        "Gomoa Dego", "Gomoa Dompem", "Gomoa Fawomangba", "Gomoa Fetteh", "Gomoa Gyankobu", "Gomoa Jukwa",
+        "Gomoa Labadi", "Gomoa Lome", "Gomoa Manfort", "Gomoa Mfom", "Gomoa Nkwantanan", "Gomoa Odumasi Krobo",
+        "Gomoa Oguanya", "Gomoa Ohuniachi", "Gomoa Onyinkye", "Gomoa Osamankwamu", "Gomoa Simbrofo",
+        "Gomoa Tsowhemen", "Gomoa Tuakwa", "Gomoa Tuata", "Gomoa Twefi", "Gomoa Zabrama", "Gomoa Zongo",
+        "Guantuabuo", "Obuan Adumsua", "Obuan Apemenyinsua", "Obuan Asikuma", "Obuan Atenfi", "Obuan Lafroma",
+        "Obuan Nanaa", "Obuan Nketiafa"
+      ].map(name => ({ name, delivery_fee: 0 }))
       
+},
+{
+    region: "North East",
+    towns:[
+
+    "Nalerigu", "Gambaga", "Walewale", "Bunkpurugu", "Chereponi", "Yunyo", "Nangodi", "Kpatinga",
+  "Gushegu", "Nakpanduri", "Nawuni", "Kugri", "Langbinsi", "Namogu", "Zakoli", "Naringo",
+  "Nayili", "Sambu", "Kpalun", "Gbintiri", "Sakpegu", "Kpembi", "Kuga", "Nansam", "Nagbanayili",
+  "Yosahi", "Jangli", "Kpasinkpe", "Adibo", "Tantala", "Wulasi", "Zanduga", "Yogri",
+  "Kpalnori", "Dimali", "Kpatihi", "Kpatinga Nyoglo", "Kpatinga Tindama", "Kunyibili",
+  "Kubintini", "Kubore", "Kumbo", "Kunkon", "Laasi", "Lakpun", "Lambubu"
+].map(name => ({ name, delivery_fee: 0 }))
+},
+
+{
+    region: "Upper West",
+    towns:[
+        "Wa", "Tumu", "Lawra", "Nandom", "Jirapa", "Nadowli", "Kaleo", "Hamile", "Funsi", "Bulenga",
+  "Issa", "Wechiau", "Dorimon", "Banje", "Tantala", "Sambu", "Gwollu", "Tuna", "Dommo", "Kperisi",
+  "Zambo", "Eremon", "Piisi", "Goriyiri", "Baariu", "Buropuon", "Duu", "Gemari", "Guo", "Hain",
+  "Han", "Juori", "Kadyiri", "Kapemba", "Kporju", "Kpongu", "Kuri", "Ku", "Kuveli", "Lasse",
+  "Manwe", "Naah", "Namo", "Napon", "Nator", "Niu", "Pina", "Puffien", "Sang", "Sareu",
+  "Sendua", "Serekpere", "Sii", "Singiri", "Tantu", "Tisa", "Yagtuuri", "Yizusi"
+].map(name => ({ name, delivery_fee: 0 }))
+    
+},
+{
+    region: "Oti",
+    towns:[
+        "Dambai", "Kadjebi", "Jasikan", "Nkwanta", "Biakoye", "Kadjebi-Asandan", "Bakpa", "Brewaniase",
+  "Dodi-Papae", "Kpeven", "Kpedze", "Leklebi", "Kpetsu", "Akrofu", "Penyi", "Dwenye", "Sifor",
+  "Matse", "Gbefi", "Nkonya Ahenkro", "Nkonya Asakyiri", "Nkonya Gborbu", "Nkonya Kwamikrom",
+  "Nkonya Ntsumuru", "Nkonya Wurupong", "Kyriahi", "Akrofu-Nyatike", "Kalakpa", "Ntravole",
+  "Akrodie", "Awameye", "Tsakye", "Nsunkwa", "Santrokofi", "Honuta", "Todome", "Kpata",
+  "Ahamansu", "Abati", "Tapa", "Gonan", "Abotoyi", "Bumbua", "Mempeasem", "Bumbuzure"
+].map(name => ({ name, delivery_fee: 0 }))
+    
+},
+{
+    region: "Western",
+    towns:[
+        
+        "Sefwi Wiawso", "Aowin", "Enchi", "Akontombra", "Boinzen", "Agyemankrom", "Amoaya", "Awisasu",
+        "Bawdie", "Bencheman", "Bodadee", "Boako", "Brahoho", "Chiandan", "Dadieso", "Deheman", "Diabaa",
+        "Diewuokor", "Dominasi", "Gulushi", "Hwediem", "Jakobu", "Juabeng", "Kabenlangruma", "Kamajeku",
+        "Kantankoran", "Kawamo", "Kawawhir", "Kofikrom", "Kwakutsir", "Kwasukrom", "Mpuntenamu", "Mfuma",
+        "Nanakrom", "Ndawayah", "Ndoblo", "Nkrabah", "Nsuhyien", "Numunamu", "Oseikrom", "Paso", "Patingo",
+        "Samogrokrom", "Sewum", "Siwabrekrom", "Subinkom", "Sukuakyi", "Tanokrom", "Topremang",
+        "Yaabokrom", "Yaakrom", "Yabraso", "Yakumukrom"
+      ].map(name => ({ name, delivery_fee: 0 }))
+},
+{
+    region: "Volta",
+    towns:[
+        "Ho", "Keta", "Hohoe", "Sogakofe", "Anloga", "Akatsi", "Kpando", "Nkwanta", "Dzemeni", "Matse",
+        "Dzodze", "Have", "Vane", "Adidome", "Amedzofe", "Avatime", "Kadjebi", "Vakpo", "Kpeve",
+        "Golokuati", "Dzolokpuita", "Alavanyo", "Tsito", "Kpogedi", "Kpalime", "Dzodze", "Leklebi Agbesia",
+        "Ve-Golokuati", "Adaklu Wumako", "Akoviefe", "Anfoega", "Avenor", "Ave-Xawieda", "Awate",
+        "Awudome Tsilu", "Awutungor", "Baglo", "Bakpa", "Battor", "Brewanaiase", "Dakpotoku Tafi",
+        "Dohego", "Dodi-Papae", "Fievie-Dugame", "Gbadzeme", "Gbefi Wheta", "Goefe Adimakope", "Gofe Battor",
+        "Gonu", "Hodzo", "Horti", "Kalu", "Klave", "Kodiabe", "Kpando Tokor", "Kpatsa", "Liliaxe",
+        "Logokope", "Lomnava", "Matse Logoku", "Matse Tefle", "Nkonya", "Nogokpo", "Nohyieso", "Ologu",
+        "Penyi", "Sasekpor", "Saviewe", "Sovie", "Taviefe", "Tegame", "Tsawoe", "Tsiame"
+      ].map(name => ({ name, delivery_fee: 0 }))
       
-  ];
-  
+    
+},
+
+    ];
   export default locations;
   
