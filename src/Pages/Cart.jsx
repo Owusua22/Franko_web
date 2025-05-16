@@ -40,11 +40,7 @@ const CartPage = () => {
     );
     localStorage.setItem("selectedCart", JSON.stringify(selectedCartData));
   }, [selectedItems, cart]);
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem("selectedCart");
-    };
-  }, []);
+
     
   const toggleSelectAll = () => {
     const allSelected = !selectAll;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -22,11 +22,14 @@ import CheckoutForm from "../Component/CheckoutForm";
 const { TextArea } = Input;
 const { Option } = Select;
 const { Title, Text } = Typography;
+import locations from "../Component/Locations"
 
 const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.orders);
+
+
 
   const cartId = localStorage.getItem("cartId");
   const customerData = JSON.parse(localStorage.getItem("customer"));
@@ -38,23 +41,37 @@ const Checkout = () => {
 
   const customerId = customerData?.customerAccountNumber;
   const customerAccountType = customerData?.accountType;
-  const customerName = `${customerData?.firstName || ""} ${customerData?.lastName || ""}`;
-  const customerNumber = customerData?.contactNumber || customerData?.ContactNumber || "";
-
-  const storedShipping = JSON.parse(localStorage.getItem("shippingDetails")) || {};
-  const defaultAddress = storedShipping?.location || "";
-  const shippingFee = storedShipping?.locationCharge || 0;
+  const [customerName, setCustomerName] = useState("");
+  const [customerNumber, setCustomerNumber] = useState("")
+  
+  const defaultAddress = customerData?.address || "";
 
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [orderNote, setOrderNote] = useState("");
   const [selectedAddress, setSelectedAddress] = useState(defaultAddress);
 
-  const addressOptions = [defaultAddress, "Warehouse Pickup", "Branch Office Delivery"];
+  const [shippingFee, setShippingFee] = useState(0);
+
 
   const calculateTotalAmount = () => {
     const subtotal = cartItems.reduce((total, item) => total + (item.total || 0), 0);
     return subtotal + shippingFee;
   };
+  useEffect(() => {
+    const fee = Number(localStorage.getItem("deliveryFee"));
+    if (!isNaN(fee)) {
+      setShippingFee(fee);
+    }
+  }, []);
+  useEffect(() => {
+    const customerData = JSON.parse(localStorage.getItem("customer"));
+    if (customerData) {
+      setCustomerName(
+        `${customerData?.firstName || ""} ${customerData?.lastName || ""}`.trim()
+      );
+      setCustomerNumber(customerData?.contactNumber || customerData?.ContactNumber || "");
+    }
+  }, []);
 
   const generateOrderId = () => {
     const prefix = "ORD";
@@ -156,61 +173,110 @@ const Checkout = () => {
       message.error("An error occurred during checkout.");
     }
   };
+  const renderImage = (imagePath) => {
+    const backendBaseURL = "https://smfteapi.salesmate.app";
+    const imageUrl = `${backendBaseURL}/Media/Products_Images/${imagePath.split("\\").pop()}`;
+
+    return (
+      <img
+        src={imageUrl}
+        alt="Product"
+        className="w-16 h-16 object-cover rounded-lg"
+      />
+    );
+  };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <Card title="Checkout" bordered={false}>
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        <CheckoutForm
-  customerName={customerName}
-  customerNumber={customerNumber}
-  setCustomerNumber={(num) => localStorage.setItem("customer", JSON.stringify({ ...customerData, contactNumber: num }))}
-  selectedAddress={selectedAddress}
-  setSelectedAddress={setSelectedAddress}
-  addressOptions={addressOptions}
-  orderNote={orderNote}
-  setOrderNote={setOrderNote}
-  paymentMethod={paymentMethod}
-  setPaymentMethod={setPaymentMethod}
-/>
-<Divider />
-
-
-          <Divider />
-
-          <Text strong>Cart Summary:</Text>
-          {(selectedCart?.length > 0 ? selectedCart : cartItems).map((item) => (
-            <div key={item.productId} className="flex justify-between">
-              <Text>{item.productName} (x{item.quantity})</Text>
-              <Text>GHS {item.total?.toFixed(2)}</Text>
+    <div className="p-4">
+      <Title level={3} className="mb-4">Checkout</Title>
+      <div className="bg-white shadow-md rounded-lg p-4">
+        <div className="w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Left: Checkout Form */}
+            <div className="md:col-span-1">
+              <Card
+                title={<Text strong className="text-base">Customer Details</Text>}
+                bordered={false}
+                className="shadow-sm"
+              >
+                 <CheckoutForm
+    customerName={customerName}
+    setCustomerName={setCustomerName}
+    customerNumber={customerNumber}
+    setCustomerNumber={setCustomerNumber}
+    selectedAddress={selectedAddress}
+    setSelectedAddress={setSelectedAddress}
+    orderNote={orderNote}
+    setOrderNote={setOrderNote}
+    paymentMethod={paymentMethod}
+    setPaymentMethod={setPaymentMethod}
+    locations={locations}
+  />
+              </Card>
             </div>
-          ))}
+  
+            {/* Right: Cart Summary */}
+            <div className="md:col-span-2">
+            <Card
+  title={<Text strong className="text-base">Cart Summary</Text>}
+  bordered={false}
+  className="shadow-sm"
+>
+  {(selectedCart?.length > 0 ? selectedCart : cartItems).map((item) => (
+    <div
+      key={item.productId}
+      className="flex items-center justify-between gap-3 py-3 border-b"
+    >
+      <div className="flex items-center gap-3">
+      <div className="mr-4">{renderImage(item.imagePath)}</div>
+        <div>
+          <p className="text-sm font-medium">{item.productName}</p>
+          <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+        </div>
+      </div>
+      <div className="text-right">
+        <Text className="text-sm font-semibold">₵{item.total?.toFixed(2)}</Text>
+      </div>
+    </div>
+  ))}
 
-          <Divider />
+  <Divider className="my-2" />
 
-          <div className="flex justify-between">
-            <Text>Shipping Fee:</Text>
-            <Text>GHS {shippingFee.toFixed(2)}</Text>
+  <div className="flex justify-between text-sm mb-1">
+    <Text>Shipping Fee:</Text>
+    {shippingFee === 0 ? (
+      <Text type="warning">Delivery charges apply</Text>
+    ) : (
+      <Text strong>₵{shippingFee.toFixed(2)}</Text>
+    )}
+  </div>
+
+  <div className="flex justify-between mt-2 text-base font-semibold">
+    <Text>Total Amount:</Text>
+    <Text className="text-green-600">
+      ₵{(calculateTotalAmount()).toFixed(2)}
+    </Text>
+  </div>
+
+  <Button
+    type="primary"
+    size="large"
+    block
+    className="mt-4 bg-green-600 hover:bg-green-700"
+    onClick={handleCheckout}
+    loading={loading}
+  >
+    {loading ? "Processing..." : "Place Order"}
+  </Button>
+</Card>
+
+            </div>
           </div>
-
-          <div className="flex justify-between">
-            <Title level={4}>Total:</Title>
-            <Title level={4}>GHS {calculateTotalAmount().toFixed(2)}</Title>
-          </div>
-
-          <Button
-            type="primary"
-            size="large"
-            block
-            onClick={handleCheckout}
-            loading={loading}
-          >
-            {loading ? "Processing..." : "Place Order"}
-          </Button>
-        </Space>
-      </Card>
+        </div>
+      </div>
     </div>
   );
+  
 };
 
 export default Checkout;
