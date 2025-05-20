@@ -107,26 +107,27 @@ const Brand = () => {
 
       {/* Related Brands */}
       <div>
-        <h4 className="text-sm font-semibold mb-2">Related Brands</h4>
-        <div className="space-y-2">
-          {filteredBrands.map((brand) => (
-            <div
-              key={brand.brandId}
-              onClick={() => {
-                navigate(`/brand/${brand.brandId}`);
-                setIsDrawerOpen(false);
-              }}
-              className={`cursor-pointer px-3 py-1 rounded-full text-sm transition ${
-                brand.brandId === brandId
-                  ? "bg-green-200 text-green-800 font-semibold"
-                  : "text-gray-700 hover:bg-green-100"
-              }`}
-            >
-              {brand.brandName}
-            </div>
-          ))}
-        </div>
+  <h4 className="text-sm font-semibold mb-2">Related Brands</h4>
+  <div className="grid grid-cols-2 gap-2">
+    {filteredBrands.map((brand) => (
+      <div
+        key={brand.brandId}
+        onClick={() => {
+          navigate(`/brand/${brand.brandId}`);
+          setIsDrawerOpen(false);
+        }}
+        className={`cursor-pointer px-2 py-1 rounded-full text-sm text-center transition ${
+          brand.brandId === brandId
+            ? "bg-green-200 text-green-800 font-semibold"
+            : "text-gray-700 hover:bg-green-100"
+        }`}
+      >
+        {brand.brandName}
       </div>
+    ))}
+  </div>
+</div>
+
     </div>
   );
 
@@ -146,16 +147,26 @@ const Brand = () => {
 
       {/* Drawer */}
       {isDrawerOpen && (
-        <div className="fixed top-0 left-0 w-3/4 h-full bg-white z-50 p-4 shadow-lg overflow-auto transition-transform duration-300 ease-in-out">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold">Filters</h2>
-            <button onClick={() => setIsDrawerOpen(false)}>
-              <XMarkIcon className="w-6 h-6" />
-            </button>
-          </div>
-          {renderFilterContent()}
-        </div>
-      )}
+  <div
+    className="fixed inset-0 z-50 flex"
+    onClick={() => setIsDrawerOpen(false)}
+  >
+    {/* Drawer content */}
+    <div
+      className="w-3/4 h-full bg-white p-4 shadow-lg overflow-auto transition-transform duration-300 ease-in-out"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-bold">Filters</h2>
+        <button onClick={() => setIsDrawerOpen(false)}>
+          <XMarkIcon className="w-6 h-6" />
+        </button>
+      </div>
+      {renderFilterContent()}
+    </div>
+  </div>
+)}
+
 
       {/* Layout */}
       <div className="flex flex-col md:flex-row gap-6">

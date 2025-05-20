@@ -9,12 +9,16 @@ import {ShoppingCartIcon,CheckCircleIcon,HeartIcon as OutlineHeartIcon,EyeIcon,T
 import { ShoppingBagIcon } from "@heroicons/react/24/outline"; // Make sure this is imported
 import { FaWhatsapp } from "react-icons/fa";
 import CartButton from "../Component/CartButton";
+import ProductCard from "../Component/ProductCard";
+import useAddToCart from "../Component/Cart";
 
 const formatPrice = (price) =>
   price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 const ProductDescription = () => {
   const { productID } = useParams();
+
+  const { addProductToCart, loading: cartLoading } = useAddToCart();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentProduct, products, loading } = useSelector((state) => state.products);
@@ -65,7 +69,13 @@ const ProductDescription = () => {
     window.open(shareUrl, "_blank");
   };
 
-
+// Helper: Get valid image URL
+const getValidImageUrl = (imagePath) => {
+  if (!imagePath) return "https://via.placeholder.com/150";
+  return imagePath.includes("\\")
+    ? `https://smfteapi.salesmate.app/Media/Products_Images/${imagePath.split("\\").pop()}`
+    : imagePath;
+};
   const handlePlaceOrder = () => {
     alert("Redirecting to order form...");
   };
@@ -231,173 +241,109 @@ const ProductDescription = () => {
           );
         })}
       </div>
-
       {viewedProducts.length > 0 && (
-        <section className="mt-16">
-          <h2 className="text-sm md:text-lg font-bold text-gray-900 relative whitespace-nowrap mb-6">
-            Recently Viewed
-            <span className="absolute -bottom-1 left-0 w-16 h-1 bg-red-400 rounded-full "></span>
-          </h2>
+  <section className="mt-16">
+    <h2 className="text-sm md:text-lg font-bold text-gray-900 relative whitespace-nowrap mb-6">
+      Recently Viewed
+      <span className="absolute -bottom-1 left-0 w-16 h-1 bg-red-400 rounded-full "></span>
+    </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {viewedProducts.map((product, index) => {
-              const discount =
-                product.oldPrice > 0
-                  ? Math.round(
-                      ((product.oldPrice - product.price) / product.oldPrice) *
-                        100
-                    )
-                  : 0;
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+      {viewedProducts.map((product, index) => {
+        const discount =
+          product.oldPrice > 0
+            ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+            : 0;
 
-              return (
-                <div
-                  key={product.id || index}
-                  className="relative group border border-gray-100 rounded-2xl overflow-hidden bg-white shadow hover:shadow-lg transition"
-                >
-                  {discount > 0 && (
-                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full z-10 w-10 h-10 flex items-center justify-center">
-                      -{discount}%
-                    </span>
-                  )}
-                  <div
-                    className="h-48 flex items-center justify-center cursor-pointer"
+        const imageUrl = getValidImageUrl(product.image);
+
+        return (
+          <div
+            key={product.id || index}
+            className="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+          >
+            <div className="relative overflow-hidden">
+              {/* Discount badge */}
+              {discount > 0 && (
+                <span className="absolute top-2 left-2 bg-red-400 text-white text-xs font-semibold px-2 py-1 rounded-full z-10 w-10 h-10 flex items-center justify-center">
+                  -{discount}%
+                </span>
+              )}
+
+              {/* Product Image */}
+              <div
+                className="h-40 md:h-52 w-full flex items-center justify-center cursor-pointer transition-transform duration-300"
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
+                <img
+                  src={imageUrl}
+                  alt={product.name}
+                  className="h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Hover icons */}
+              <div className="absolute inset-0 hidden group-hover:flex items-center justify-center gap-3 bg-black/40 z-20 transition-all">
+                <Tooltip content="Add to Wishlist" placement="top">
+                  <button className="p-2 bg-white/10 hover:bg-white/20 rounded-full">
+                    <OutlineHeartIcon className="w-5 h-5 text-white hover:text-red-400" />
+                  </button>
+                </Tooltip>
+                <Tooltip content="View Details" placement="top">
+                  <button
+                    className="p-2 bg-white/10 hover:bg-white/20 rounded-full"
                     onClick={() => navigate(`/product/${product.id}`)}
                   >
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+                    <EyeIcon className="w-5 h-5 text-white hover:text-yellow-400" />
+                  </button>
+                </Tooltip>
+                <Tooltip content="Add to Cart" placement="top">
+  <button
+    className="p-2 bg-white/10 hover:bg-white/20 rounded-full"
+    onClick={() => addProductToCart(product)}
+    disabled={cartLoading}
+  >
+    <ShoppingCartIcon className="w-5 h-5 text-white hover:text-red-400" />
+  </button>
+</Tooltip>
+              </div>
+            </div>
 
-                  <div className="absolute top-2 right-2 hidden group-hover:flex flex-col gap-3 bg-black/40 backdrop-blur-sm p-1 rounded-xl shadow-lg z-10 transition-all duration-300">
-                    <Tooltip content="Add to Wishlist" placement="left">
-                      <button className="p-2 rounded-full hover:bg-white/10 transition">
-                        <OutlineHeartIcon className="w-5 h-5 text-white hover:text-red-400" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="View Details" placement="left">
-                      <button
-                        className="p-2 rounded-full hover:bg-white/10 transition"
-                        onClick={() => navigate(`/product/${product.id}`)}
-                      >
-                        <EyeIcon className="w-5 h-5 text-white hover:text-yellow-400" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="Add to Cart" placement="left">
-                      <button className="p-2 rounded-full hover:bg-white/10 transition">
-                        <ShoppingCartIcon className="w-5 h-5 text-white hover:text-green-400" />
-                      </button>
-                    </Tooltip>
-                  </div>
-
-                  <div className="px-3 py-2">
-                    <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <div className="mt-1 flex flex-col md:flex-row items-baseline gap-2">
-                      <span className="text-sm text-red-500">
-                        ₵{formatPrice(product.price)}.00
-                      </span>
-                      {product.oldPrice > 0 && (
-                        <span className="text-xs text-gray-400 line-through">
-                          ₵{formatPrice(product.oldPrice)}.00
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {/* Product info */}
+            <div className="p-3 text-center space-y-1">
+              <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
+                {product.name || "Unnamed Product"}
+              </h3>
+              <div className="flex items-center justify-center gap-1 mt-1">
+                <span className="text-red-500 font-medium text-sm">
+                  {formatPrice(product.price)}
+                </span>
+                {product.oldPrice > 0 && (
+                  <span className="text-xs line-through text-gray-400">
+                    {formatPrice(product.oldPrice)}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-        </section>
-      )}
+        );
+      })}
+    </div>
+  </section>
+)}
 
-      {related.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-sm md:text-lg font-bold text-gray-900 relative whitespace-nowrap mb-6">
-            You May also Like
-            <span className="absolute -bottom-1 left-0 w-16 h-1 bg-red-400 rounded-full "></span>
-          </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {related.map((product, index) => {
-              const imageUrl = `https://smfteapi.salesmate.app/Media/Products_Images/${product.productImage
-                ?.split("\\")
-                .pop()}`;
-              const discount =
-                product.oldPrice > 0
-                  ? Math.round(
-                      ((product.oldPrice - product.price) / product.oldPrice) *
-                        100
-                    )
-                  : 0;
 
-              return (
-                <div
-                  key={product.productID || index}
-                  className="relative group border border-gray-100 rounded-2xl overflow-hidden bg-white shadow hover:shadow-lg transition"
-                >
-                  {discount > 0 && (
-                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full z-10 w-10 h-10 flex items-center justify-center">
-                      -{discount}%
-                    </span>
-                  )}
-                  <div
-                    className="h-48 flex items-center justify-center cursor-pointer"
-                    onClick={() => navigate(`/product/${product.productID}`)}
-                  >
-                    <img
-                      src={imageUrl}
-                      alt={product.productName}
-                      className="h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
+{related.length > 0 && (
+  <section className="mt-10">
+    <h2 className="text-sm md:text-lg font-bold text-gray-900 relative whitespace-nowrap mb-6">
+      You May Also Like
+      <span className="absolute -bottom-1 left-0 w-16 h-1 bg-red-400 rounded-full "></span>
+    </h2>
+    <ProductCard currentProducts={related} navigate={navigate} />
+  </section>
+)}
 
-                  <div className="absolute top-2 right-2 hidden group-hover:flex flex-col gap-3 bg-black/40 backdrop-blur-sm p-1 rounded-xl shadow-lg z-10 transition-all duration-300">
-                    <Tooltip content="Add to Wishlist" placement="left">
-                      <button className="p-2 rounded-full hover:bg-white/10 transition">
-                        <OutlineHeartIcon className="w-5 h-5 text-white hover:text-red-400" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="View Details" placement="left">
-                      <button
-                        className="p-2 rounded-full hover:bg-white/10 transition"
-                        onClick={() =>
-                          navigate(`/product/${product.productID}`)
-                        }
-                      >
-                        <EyeIcon className="w-5 h-5 text-white hover:text-yellow-400" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip content="Add to Cart" placement="left">
-                      <button className="p-2 rounded-full hover:bg-white/10 transition">
-                        <ShoppingCartIcon className="w-5 h-5 text-white hover:text-green-400" />
-                      </button>
-                    </Tooltip>
-                  </div>
-
-                  <div className="px-3 py-2">
-                    <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
-                      {product.productName}
-                    </h3>
-                    <div className="mt-1 flex flex-col md:flex-row items-baseline gap-2">
-                      <span className="text-sm text-red-500">
-                        ₵{formatPrice(product.price)}.00
-                      </span>
-                      {product.oldPrice > 0 && (
-                        <span className="text-xs text-gray-400 line-through">
-                          ₵{formatPrice(product.oldPrice)}.00
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
     </div>
   );
 };

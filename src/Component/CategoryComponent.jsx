@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import { Typography, IconButton } from "@material-tailwind/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-
 import phone from "../assets/phone.jpeg";
 import laptop from "../assets/lap.jpeg";
 import fridge from "../assets/fridge.jpeg";
@@ -19,7 +18,7 @@ const categories = [
   { name: "Refrigerator", img: fridge },
   { name: "Television", img: tv },
   { name: "Speakers", img: speaker },
-  { name: "Home Appliances", img: blender },
+  { name: "Appliances", img: blender },
   { name: "Air-conditioners", img: ac },
   { name: "Combo", img: combo },
   { name: "Accessories", img: accessories },

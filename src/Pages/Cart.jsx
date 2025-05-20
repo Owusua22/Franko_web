@@ -14,18 +14,22 @@ import {Button,
   DialogFooter,
   Typography,
 } from '@material-tailwind/react';
-
+import AuthModal from "../Component/AuthModal";
 import {
   TrashIcon,
   MinusIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import carty from "../assets/cart.gif"
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 
 const CartPage = () => {
-  const navigate = useNavigate();
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
   const { cart, loading, error, cartId } = useSelector((state) => state.cart);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -56,6 +60,26 @@ const CartPage = () => {
     );
   };
 
+  // 👇 Move this inside the component function
+  const handleCheckout = () => {
+    const storedCustomer = JSON.parse(localStorage.getItem("customer"));
+  
+    if (!storedCustomer) {
+      setAuthModalOpen(true);
+      return;
+    }
+  
+    const selectedCartItems = selectedItems.length > 0
+      ? cart.filter((item) => selectedItems.includes(item.productId))
+      : cart;
+  
+    localStorage.setItem("selectedCart", JSON.stringify(selectedCartItems));
+  
+    navigate("/checkout");
+  };
+  
+
+
   const handleQuantityChange = (productId, quantity) => {
     if (quantity >= 1) {
       dispatch(updateCartItem({ cartId, productId, quantity }));
@@ -74,6 +98,7 @@ const CartPage = () => {
     setSelectAll(false);
     setOpenModal(false);
   };
+ 
 
   const selectedCartItems = selectedItems.length > 0
     ? cart.filter((item) => selectedItems.includes(item.productId))
@@ -88,6 +113,7 @@ const CartPage = () => {
   );
 
   const totalCartItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+  
 
   const renderImage = (imagePath) => {
     if (!imagePath) {
@@ -230,38 +256,45 @@ const CartPage = () => {
 
 
             {/* Order Summary */}
-            <div className="w-full lg:w-1/3 border bg-white p-6 rounded-xl shadow-md sticky bottom-0 lg:static z-50">
-  <Typography variant="h6" className="mb-4">
-    Cart Summary
-  </Typography>
-  <div className="flex justify-between mb-2">
-    <Typography>
+            <div className="w-full lg:w-1/3 border bg-white p-6 rounded-xl shadow-lg sticky bottom-0 lg:static z-50">
+  <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
+    🛒 Cart Summary
+  </h2>
+
+  <div className="flex justify-between items-center mb-2 text-sm text-gray-600">
+    <span>
       {selectedItems.length > 0 ? 'Selected Items Total:' : 'All Items Total:'}
-    </Typography>
-    <Typography>₵{selectedTotal.toFixed(2)}</Typography>
+    </span>
+    <span className="font-medium text-gray-800">
+      ₵{selectedTotal.toFixed(2)}
+    </span>
   </div>
-  <div className="flex justify-between mb-4">
-    <Typography className="font-medium text-gray-800">
-      Cart Total:
-    </Typography>
-    <Typography className="font-semibold text-gray-900">
+
+  <div className="flex justify-between items-center mb-4 text-base font-medium text-gray-800">
+    <span>Cart Total:</span>
+    <span className="text-lg font-bold text-green-700">
       ₵{(selectedItems.length > 0 ? selectedTotal : fullTotal).toFixed(2)}
-    </Typography>
+    </span>
   </div>
-  <Typography variant="small" className="text-center text-gray-500 mt-2">
-    Taxes, discounts and shipping calculated at checkout.
-  </Typography>
-  <Button
-    fullWidth
-    color="green"
-    onClick={() => navigate("/checkout")}
+
+  <p className="text-xs text-center text-gray-500 mb-4">
+    * Taxes, discounts & shipping will be calculated at checkout.
+  </p>
+
+  <button
+    onClick={handleCheckout}
+    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-2 px-4 rounded-md shadow hover:from-green-600 hover:to-green-700 transition duration-200 ease-in-out"
   >
     Proceed to Checkout
-  </Button>
-  
+  </button>
+
+  {/* 🔐 Auth Modal */}
+  <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} />
 </div>
 
-          </div>
+
+       </div>
+
         </>
       )}
 
@@ -281,7 +314,8 @@ const CartPage = () => {
         </DialogFooter>
       </Dialog>
     </div>
-  );
+  )
 };
+
 
 export default CartPage;

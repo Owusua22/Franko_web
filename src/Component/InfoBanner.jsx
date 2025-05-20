@@ -27,7 +27,7 @@ const InfoBanner = () => {
     : "https://via.placeholder.com/1200x400"; // Fallback image
 
   return (
-    <div className=" mx-auto px-8 mt-3">
+    <div className=" mx-auto px-4 md:px-8 mt-3">
       {/* Single Advertisement Image */}
       <div className="relative h-full overflow-hidden rounded-lg shadow-lg">
         <img

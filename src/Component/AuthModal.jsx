@@ -16,15 +16,14 @@ import {
   import { useState, useEffect, useCallback } from "react";
   import { useDispatch } from "react-redux";
   import { createCustomer, loginCustomer } from "../Redux/Slice/customerSlice";
-  import { useNavigate } from "react-router-dom";
-  import { v4 as uuidv4 } from "uuid";
+ import { v4 as uuidv4 } from "uuid";
   import logo from "../assets/frankoIcon.png";
   
   const { Title, Text } = Typography;
   
   const AuthModal = ({ open, onClose }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+
     const [isLogin, setIsLogin] = useState(true);
     const [loading, setLoading] = useState(false);
   
@@ -90,7 +89,7 @@ import {
           });
         }
         message.success("Registration successful!");
-        onClose();
+        onClose(); // ✅ Just close the modal
       } catch (error) {
         console.error("Registration error:", error);
         message.error("Registration failed.");
@@ -98,20 +97,20 @@ import {
         setLoading(false);
       }
     };
-  
+    
     const handleLogin = async () => {
       setLoading(true);
       try {
         await dispatch(loginCustomer(loginData)).unwrap();
         message.success("Login successful!");
-        navigate("/");
-        onClose();
+        onClose(); // ✅ Just close the modal
       } catch (error) {
         message.error(error || "Login failed.");
       } finally {
         setLoading(false);
       }
     };
+    
   
     return (
       <Modal

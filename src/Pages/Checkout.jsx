@@ -1,37 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  checkOutOrder,
-  updateOrderDelivery,
-  saveCheckoutDetails,
-  saveAddressDetails,
-} from "../Redux/Slice/orderSlice";
+import {checkOutOrder,updateOrderDelivery,saveCheckoutDetails,saveAddressDetails,} from "../Redux/Slice/orderSlice";
 import { clearCart } from "../Redux/Slice/cartSlice";
-import {
-  message,
-  Button,
-  Input,
-  Select,
-  Card,
-  Typography,
-  Divider,
-  Space,
-} from "antd";
+import {message,Button,Card,Typography,Divider} from "antd";
 import CheckoutForm from "../Component/CheckoutForm";
-const { TextArea } = Input;
-const { Option } = Select;
 const { Title, Text } = Typography;
 import locations from "../Component/Locations"
 
 const Checkout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading } = useSelector((state) => state.orders);
-
-
-
-  const cartId = localStorage.getItem("cartId");
+  const [loading, setLoading] = useState(false);
+ const cartId = localStorage.getItem("cartId");
   const customerData = JSON.parse(localStorage.getItem("customer"));
   const selectedCart = JSON.parse(localStorage.getItem("selectedCart"));
   const cartItems =
@@ -121,11 +102,11 @@ const Checkout = () => {
   const handleCheckout = async () => {
     if (!paymentMethod) return message.warning("Please select a payment method.");
     if (!selectedAddress) return message.warning("Please select an address.");
-
+  
     const orderId = generateOrderId();
     const orderDate = new Date().toISOString();
     const totalAmount = calculateTotalAmount();
-
+  
     const checkoutDetails = {
       Cartid: cartId,
       customerId,
@@ -140,7 +121,7 @@ const Checkout = () => {
       orderNote: orderNote || "N/A",
       orderDate,
     };
-
+  
     const addressDetails = {
       orderCode: orderId,
       address: selectedAddress,
@@ -150,8 +131,10 @@ const Checkout = () => {
       orderNote: orderNote || "N/A",
       geoLocation: "N/A",
     };
-
+  
     try {
+      setLoading(true); // Start loading
+  
       if (["Mobile Money", "Credit Card"].includes(paymentMethod)) {
         storeCheckoutDetailsInLocalStorage(checkoutDetails, addressDetails);
         dispatch(saveCheckoutDetails(checkoutDetails));
@@ -171,8 +154,11 @@ const Checkout = () => {
     } catch (error) {
       console.error(error);
       message.error("An error occurred during checkout.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
+  
   const renderImage = (imagePath) => {
     const backendBaseURL = "https://smfteapi.salesmate.app";
     const imageUrl = `${backendBaseURL}/Media/Products_Images/${imagePath.split("\\").pop()}`;
@@ -262,7 +248,7 @@ const Checkout = () => {
     type="primary"
     size="large"
     block
-    className="mt-4 bg-green-600 hover:bg-green-700"
+    className="mt-4 bg-green-400 hover:bg-green-700"
     onClick={handleCheckout}
     loading={loading}
   >

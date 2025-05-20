@@ -33,6 +33,7 @@ const Nav = () => {
 
   const [selectedBrandId, setSelectedBrandId] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const currentCustomer = useSelector((state) => state.customer.currentCustomer);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [hoveredCategory, setHoveredCategory] = useState(null);
@@ -54,13 +55,12 @@ const Nav = () => {
   }, [dispatch]);
   
   const handleAccountClick = () => {
-    const userId = localStorage.getItem("customer");
-    if (!userId) {
+    if (!currentCustomer) {
       setShowAuthModal(true);
     } else {
       navigate("/account");
     }
-  };
+  }
   
     // Close dropdown if clicked outside
     useEffect(() => {
@@ -187,19 +187,21 @@ const Nav = () => {
     <a href="/track" className={`hover:text-green-600 ${isActive("/track") && "text-green-600 font-semibold"}`}>Track Order</a>
     <button onClick={toggleRadio} className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 transition">🎧 Radio</button>
     {(() => {
-  const customer = localStorage.getItem("customer");
-  if (customer) {
-    const parsed = JSON.parse(customer);
-    const initial = parsed?.firstName?.[0]?.toUpperCase() || "U";
-    return (
-      <button
-        onClick={handleAccountClick}
-        className="bg-green-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold hover:bg-green-600 transition"
-        title={`${parsed.firstName} ${parsed.lastName}`}
-      >
-        {initial}
-      </button>
-    );
+
+
+if (currentCustomer) {
+  const initial = currentCustomer.firstName?.[0]?.toUpperCase() || "U";
+
+  return (
+    <button
+      onClick={handleAccountClick}
+      className="bg-green-500 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold hover:bg-green-600 transition"
+      title={`${currentCustomer.firstName || ''} ${currentCustomer.lastName || ''}`.trim()}
+    >
+      {initial}
+    </button>
+  );
+
   } else {
     return (
       <button onClick={handleAccountClick}>

@@ -63,7 +63,9 @@ const CartButton = ({ product, className = "", fullWidth = false }) => {
       disabled={loading}
       onClick={handleAddToCart}
       className={`flex items-center gap-2 px-4 py-3 font-semibold rounded-lg transition duration-300 hover:scale-105 shadow-md ${
-        loading ? "bg-red-300 cursor-not-allowed" : "bg-red-400 hover:bg-red-700 text-white"
+        loading
+          ? "bg-red-300 cursor-not-allowed"
+          : "bg-red-400 hover:bg-red-700 text-white"
       } ${className}`}
     >
       <ShoppingCartIcon className="w-5 h-5" />
