@@ -1,38 +1,31 @@
 import React, { useState, useEffect } from "react";
-import {
-  Input,
+import {Input,
   Select,
-  Typography,
-  Modal,
-  Button,
+  Typography,Modal,
   Form,
-  Row,
-  Col,
-  Radio,
 } from "antd";
-import {
-  EnvironmentOutlined,
+import {EnvironmentOutlined,
   PhoneOutlined,
   UserOutlined,
   FileTextOutlined,
-  CreditCardOutlined,
+  AimOutlined,
+  PushpinOutlined,
+  SaveOutlined,
 } from "@ant-design/icons";
 
 const { TextArea } = Input;
 const { Option } = Select;
-const { Title } = Typography;
+
 
 const CheckoutForm = ({
   customerName,
   setCustomerName,
   customerNumber,
   setCustomerNumber,
-  selectedAddress,
-  setSelectedAddress,
+  setDeliveryInfo,
+  deliveryInfo,
   orderNote,
   setOrderNote,
-  paymentMethod,
-  setPaymentMethod,
   locations,
 }) => {
   const [selectedRegion, setSelectedRegion] = useState(null);
@@ -41,12 +34,17 @@ const CheckoutForm = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const savedAddress = localStorage.getItem("selectedAddress");
-    const savedFee = localStorage.getItem("deliveryFee");
-
-    if (savedAddress) setSelectedAddress(savedAddress);
-    if (savedFee) setDeliveryFee(Number(savedFee));
-  }, [setSelectedAddress]);
+    if (!isModalOpen) {
+      const savedInfo = localStorage.getItem("deliveryInfo");
+      if (savedInfo) {
+        const parsedInfo = JSON.parse(savedInfo);
+        if (parsedInfo?.address && parsedInfo?.fee !== undefined) {
+          setDeliveryInfo(parsedInfo);
+          setDeliveryFee(Number(parsedInfo.fee));
+        }
+      }
+    }
+  }, [isModalOpen, setDeliveryInfo]);
 
   const handleRegionChange = (region) => {
     setSelectedRegion(region);
@@ -66,138 +64,132 @@ const CheckoutForm = ({
   const handleSaveLocation = () => {
     if (selectedRegion && selectedTown && deliveryFee !== null) {
       const fullAddress = `${selectedTown} (${selectedRegion})`;
-      setSelectedAddress(fullAddress);
-      localStorage.setItem("selectedAddress", fullAddress);
-      localStorage.setItem("deliveryFee", deliveryFee.toString());
+      const updatedDeliveryInfo = {
+        address: fullAddress,
+        fee: deliveryFee,
+      };
+      setDeliveryInfo(updatedDeliveryInfo);
+      setDeliveryFee(deliveryFee);
+      localStorage.setItem("deliveryInfo", JSON.stringify(updatedDeliveryInfo));
+      window.dispatchEvent(new Event("storage"));
       setIsModalOpen(false);
     }
   };
 
   return (
-    <Form layout="vertical" className="space-y-4">
-      <Title level={4}>Checkout Details</Title>
+    <Form layout="vertical" className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+   
+   <input
+    type="text"
+    className="w-full border p-2 mb-2"
+    value={customerName}
+    onChange={(e) => setCustomerName(e.target.value)}
+    placeholder="Full Name"
+  />
+  <input
+    type="text"
+    className="w-full border p-2 mb-2"
+    value={customerNumber}
+    onChange={(e) => setCustomerNumber(e.target.value)}
+    placeholder="Phone Number"
+  />
 
-      <Row gutter={16}>
-        <Col xs={24} sm={12}>
-          <Form.Item label="Customer Name" required>
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Enter your name"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-          </Form.Item>
-        </Col>
-
-        <Col xs={24} sm={12}>
-          <Form.Item label="Contact Number" required>
-            <Input
-              prefix={<PhoneOutlined />}
-              placeholder="Enter phone number"
-              value={customerNumber}
-              onChange={(e) => setCustomerNumber(e.target.value)}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
 
       <Form.Item label="Delivery Address">
-        <div className="flex justify-between items-center gap-2 bg-gray-50 p-3 rounded-md border border-gray-200">
-          <div className="text-sm text-gray-700 flex-1">
-            {selectedAddress ? (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-gray-50 p-4 rounded-md border border-gray-200">
+          <div className="flex-1 text-sm text-gray-700">
+            {deliveryInfo?.address ? (
               <>
-                <EnvironmentOutlined className="mr-1 text-green-500" />
-                {selectedAddress}
+                <p className="flex items-center gap-2 mb-1">
+                  <EnvironmentOutlined className="text-green-500" />
+                  {deliveryInfo.address}
+                </p>
+                <p className="text-green-600 text-xs">
+                  Delivery Fee:{" "}
+                  <strong>{deliveryInfo.fee === 0 ? "N/A" : `₵${deliveryInfo.fee}`}</strong>
+                </p>
               </>
             ) : (
               "No address selected"
             )}
-            {deliveryFee !== null && (
-              <div className="text-green-600 mt-1 text-xs">
-                Delivery Fee:{" "}
-                <strong>
-                  {deliveryFee === 0 ? "N/A" : `₵${deliveryFee}`}
-                </strong>
-              </div>
-            )}
           </div>
-          <Button type="primary" onClick={() => setIsModalOpen(true)}>
-            Select Location
-          </Button>
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2"
+          >
+            <AimOutlined /> Select Location
+          </button>
         </div>
       </Form.Item>
 
       <Modal
-        title="Select Delivery Location"
+        title={
+          <span className="flex items-center gap-2 text-lg">
+            <PushpinOutlined /> Select Delivery Location
+          </span>
+        }
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
-        onOk={handleSaveLocation}
-        okText="Save"
-        destroyOnClose
+        footer={null}
       >
-        <div className="space-y-4">
-          <Form layout="vertical">
-            <Form.Item label="Select Region">
+        <Form layout="vertical">
+          <Form.Item label="Select Region">
+            <Select
+              value={selectedRegion}
+              onChange={handleRegionChange}
+              placeholder="Choose region"
+              size="large"
+            >
+              {locations.map((location) => (
+                <Option key={location.region} value={location.region}>
+                  {location.region}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          {selectedRegion && (
+            <Form.Item label="Select Town">
               <Select
-                value={selectedRegion}
-                onChange={handleRegionChange}
-                placeholder="Choose region"
+                value={selectedTown}
+                onChange={handleTownChange}
+                placeholder="Choose town"
+                size="large"
               >
-                {locations.map((location) => (
-                  <Option key={location.region} value={location.region}>
-                    {location.region}
-                  </Option>
-                ))}
+                {locations
+                  .find((loc) => loc.region === selectedRegion)
+                  ?.towns.map((town) => (
+                    <Option key={town.name} value={town.name}>
+                      {town.name} ({town.delivery_fee === 0 ? "N/A" : `₵${town.delivery_fee}`})
+                    </Option>
+                  ))}
               </Select>
             </Form.Item>
+          )}
 
-            {selectedRegion && (
-              <Form.Item label="Select Town">
-                <Select
-                  value={selectedTown}
-                  onChange={handleTownChange}
-                  placeholder="Choose town"
-                >
-                  {locations
-                    .find((loc) => loc.region === selectedRegion)
-                    ?.towns.map((town) => (
-                      <Option key={town.name} value={town.name}>
-                        {town.name} (
-                        {town.delivery_fee === 0
-                          ? "N/A"
-                          : `₵${town.delivery_fee}`}
-                        )
-                      </Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            )}
-          </Form>
-        </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={handleSaveLocation}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2"
+            >
+              <SaveOutlined /> Save
+            </button>
+          </div>
+        </Form>
       </Modal>
 
       <Form.Item label="Order Note">
-        <TextArea
-          prefix={<FileTextOutlined />}
-          rows={3}
-          value={orderNote}
-          onChange={(e) => setOrderNote(e.target.value)}
-          placeholder="Add any notes about your order"
-        />
-      </Form.Item>
-
-      <Form.Item label="Payment Method" required>
-        <Radio.Group
-          onChange={(e) => setPaymentMethod(e.target.value)}
-          value={paymentMethod}
-        >
-          {/* Conditionally render based on delivery fee */}
-          {deliveryFee !== 0 && (
-            <Radio value="Cash on Delivery">Cash on Delivery</Radio>
-          )}
-          <Radio value="Mobile Money">Mobile Money</Radio>
-          <Radio value="Credit Card">Credit Card</Radio>
-        </Radio.Group>
+        <div className="relative">
+          <FileTextOutlined className="absolute top-3 left-3 text-gray-400" />
+          <TextArea
+            rows={3}
+            value={orderNote}
+            onChange={(e) => setOrderNote(e.target.value)}
+            placeholder="Add any notes about your order"
+            className="pl-8"
+          />
+        </div>
       </Form.Item>
     </Form>
   );
