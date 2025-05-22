@@ -1,35 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  updateCartItem,
-  deleteCartItem,
-  getCartById,
-} from '../Redux/Slice/cartSlice';
-
-import {Button,
-  Checkbox,
-  Dialog,
-  DialogHeader,
-  DialogBody,
-  DialogFooter,
-  Typography,
-} from '@material-tailwind/react';
+import {updateCartItem,deleteCartItem,getCartById} from '../Redux/Slice/cartSlice';
+import {Button,Checkbox,Dialog,DialogHeader,DialogBody,DialogFooter} from '@material-tailwind/react';
 import AuthModal from "../Component/AuthModal";
-import {
-  TrashIcon,
-  MinusIcon,
-  PlusIcon,
-} from '@heroicons/react/24/outline';
+import {TrashIcon,MinusIcon,PlusIcon} from '@heroicons/react/24/outline';
 import carty from "../assets/cart.gif"
 import { useNavigate } from 'react-router-dom';
-
+import { Divider } from 'antd';
 
 const CartPage = () => {
-
-  const dispatch = useDispatch();
+const dispatch = useDispatch();
   const navigate = useNavigate();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-
   const { cart, loading, error, cartId } = useSelector((state) => state.cart);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -142,8 +124,7 @@ const CartPage = () => {
   return (
     <div className=" mx-auto px-4 py-8">
   <div className="flex items-center mb-6 w-full">
-  <h2 className="text-md md:text-2xl font-bold text-gray-900 whitespace-nowrap">Shopping Cart</h2>
-
+  <h2 className="text-md md:text-xl font-bold text-gray-700">🛒 Shopping Cart</h2>
   <div className="flex-grow border-t border-gray-300 mx-4"></div> {/* Horizontal Divider */}
 
   <span className="text-gray-600 text-sm whitespace-nowrap">{totalCartItems} Item(s)</span>
@@ -181,13 +162,13 @@ const CartPage = () => {
             )}
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex flex-col md:flex-row gap-2">
             {/* Cart Items */}
             <div className="flex-1 space-y-4">
-  {cart.map((item, index) => (
+  {cart.map((item) => (
     <div key={item.productId}>
       {/* --- Cart Item Content --- */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 ">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-2 md:p-4 ">
         <div className="flex items-center gap-4 w-full sm:w-2/3">
           <Checkbox
             checked={selectedItems.includes(item.productId)}
@@ -203,8 +184,8 @@ const CartPage = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-6 md:gap-6 flex-wrap sm:flex-nowrap">
-          <div className="flex items-center border rounded-md px-2 py-1 bg-gray-50 shadow-sm">
+        <div className="flex items-center gap-6 md:gap-6 md:lex-wrap flex-nowrap">
+          <div className="flex items-center border rounded-lg  bg-gray-50 shadow-sm">
             <Button
               size="sm"
               variant="text"
@@ -244,19 +225,19 @@ const CartPage = () => {
             <TrashIcon className="h-5 w-5" />
           </Button>
         </div>
+      
       </div>
 
       {/* Divider under each item except last */}
-      {index < cart.length - 1 && (
-        <hr className="border-gray-200 mx-2 sm:mx-4" />
-      )}
+   <Divider className='mt-1'/>
     </div>
   ))}
 </div>
 
 
             {/* Order Summary */}
-            <div className="w-full lg:w-1/3 border bg-white p-6 rounded-xl shadow-lg sticky bottom-0 lg:static z-50">
+{/* Order Summary */}
+<div className="w-full lg:w-1/3 bg-white rounded-t-xl shadow-[0_-2px_10px_rgba(0,0,0,0.05)] border-t border-gray-200 fixed bottom-0 left-0 z-50 p-4 lg:static lg:rounded-xl lg:shadow-lg lg:border lg:p-6">
   <h2 className="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">
     🛒 Cart Summary
   </h2>
